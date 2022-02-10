@@ -71,7 +71,9 @@ def main():
         st.markdown("---")
 
     else:
-        st.image('lab_01/vigenere.png', width=600)
+        show_table = st.checkbox("Показать таблицу со сдвигом алфавита")
+        if show_table:
+            st.image('lab_01/vigenere.png', width=600)
 
         st.markdown("---")
         c3, c4 = st.columns(2)

@@ -57,6 +57,7 @@ def main():
         mes = c1.text_input("Введите сообщение для шифрования:", value="Apple").upper()
         k = int(c2.number_input("Укажите сдвиг для шифрования:", min_value=1, max_value=26, value=3, step=1))
 
+        st.button("Шифровать")
         encrypted = caesar_cypher(mes, k)
         st.write(f"Результат шифрования: {encrypted}")
 
@@ -65,6 +66,7 @@ def main():
         mes2 = c11.text_input("Введите сообщение для дешифровки:", value="dssoh").upper()
         k2 = int(c22.number_input("Укажите сдвиг для дешифровки:", min_value=1, max_value=26, value=3, step=1))
 
+        st.button("Дешифровать")
         decrypted = caesar_cypher(mes2, k2, type_="de")
         st.write(f"Результат дешифровки: {decrypted}")
 
@@ -85,6 +87,7 @@ def main():
         df = pd.DataFrame(data)
         st.write(df.T)
 
+        st.button("Шифровать")
         encrypted = vigenere_cypher(mes, k)
         st.write(f"Результат шифрования: {encrypted}")
 
@@ -93,7 +96,10 @@ def main():
         mes2 = c33.text_input("Введите сообщение для дешифровки:", value="LXFOPVEFRNHR").upper()
         k2 = c44.text_input("Введите ключ для дешифровки:", value="Lemon").upper()
         k2 = (k2 * len(mes))[:len(mes)]
-        st.write(f"Результат дешифровки: {vigenere_cypher(mes2, k2, type_='de')}")
+
+        st.button("Дешифровать")
+        decrypted = vigenere_cypher(mes2, k2, type_='de')
+        st.write(f"Результат дешифровки: {decrypted}")
 
         st.markdown("---")
 

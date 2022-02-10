@@ -71,7 +71,7 @@ def main():
         st.markdown("---")
 
     else:
-        st.image('lab_01/vigenere.png')
+        st.image('lab_01/vigenere.png', width=600)
 
         st.markdown("---")
         c3, c4 = st.columns(2)

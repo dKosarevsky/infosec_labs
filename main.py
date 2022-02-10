@@ -6,7 +6,7 @@ from lab_01 import caesar
 # from lab_04 import
 # from lab_05 import
 
-st.set_page_config(initial_sidebar_state="collapsed")
+# st.set_page_config(initial_sidebar_state="collapsed")
 st.sidebar.image('logo.png', width=300)
 
 

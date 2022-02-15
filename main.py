@@ -1,7 +1,7 @@
 import streamlit as st
 
 from lab_01 import caesar
-# from lab_02 import
+from lab_02 import rsa
 # from lab_03 import
 # from lab_04 import
 # from lab_05 import
@@ -28,26 +28,26 @@ def main():
     lab = st.sidebar.radio(
         "Выберите Лабораторную работу:", (
             "1. Шифр Цезаря. Шифр Виженера.",
-            # "2. .",
+            "2. _________ RSA.",
             # "3. .",
             # "4. .",
             # "5. .",
         ),
-        index=0
+        index=1
     )
 
     if lab[:1] == "1":
         caesar.main()
 
-    # elif lab[:1] == "2":
-    #     .main()
-    #
+    elif lab[:1] == "2":
+        rsa.main()
+
     # elif lab[:1] == "3":
     #     .main()
-    #
+
     # elif lab[:1] == "4":
     #     .main()
-    #
+
     # elif lab[:1] == "5":
     #     .main()
 

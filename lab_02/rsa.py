@@ -1,68 +1,65 @@
 import streamlit as st
-import random as rnd
+import secrets
+import sympy
 
 
 class RSA:
 
-    def __init__(self, private_key="", public_key="", random=rnd):
-        self.private_key = private_key
-        self.public_key = public_key
-        self.random = random
+    def __init__(self):
+        pass
 
     @staticmethod
-    def is_prime(num):
-        if num == 2:
-            return True
-        if num < 2 or num % 2 == 0:
-            return False
-        for n in range(3, int(num ** 0.5) + 2, 2):
-            if num % n == 0:
-                return False
-        return True
-
-    def generate_random_prime(self, max_prime_length):
-        while 1:
-            ran_prime = self.random.randint(0, max_prime_length)
-            if self.is_prime(ran_prime):
-                return ran_prime
+    def generate_random_prime(length):
+        while True:
+            num = secrets.randbits(length)
+            if num.bit_length() == length:
+                if sympy.isprime(num):
+                    return num
 
     @staticmethod
     def euclidean(a, b):
-        while b != 0:
+        while b:
             a, b = b, a % b
         return a
 
+    def fermat_numbers(self, n):
+        for i in range(5):
+            num = 2 ** 2 ** i + 1
+            if self.euclidean(num, n) == 1:
+                return num
+        return -1
+
     def extended_euclidean(self, a, b):
-        if a == 0:
-            return b, 0, 1
+        if b == 0:
+            return a, 1, 0
         else:
-            d, y, x = self.extended_euclidean(b % a, a)
-            return d, x - (b // a) * y, y
+            d, x, y = self.extended_euclidean(b, a % b)
+            x, y = y, x - (a // b) * y
+            return d, x, y
 
-    def generate_keys(self):
-        p = self.generate_random_prime(10000000000)
-        q = self.generate_random_prime(10000000000)
+    def modular_inverse(self, a, n):
+        _, x, _ = self.extended_euclidean(a, n)
+        return x % n
 
-        modulus = p * q
-        st.write("Модуль (n) = ", modulus)
-        f_mod = (p - 1) * (q - 1)
-        st.write("Функция Эйлера от числа n = ", f_mod)
+    def generate_keys(self, p, q):
+        if sympy.isprime(p) is False or sympy.isprime(q) is False:
+            st.error('Число должно быть простым. Повторите ввод или сгенерируйте числа.')
+            st.stop()
+        elif p == q:
+            st.error('Числа p и q не могут быть равны. Повторите ввод или сгенерируйте числа.')
+            st.stop()
+        n = p * q
+        st.write("Модуль (n) = ", n)
+        phi_n = (p - 1) * (q - 1)
+        st.write("Функция Эйлера от числа n = ", phi_n)
 
-        self.public_key = self.random.randint(1, f_mod)
-        d = self.euclidean(self.public_key, f_mod)
-        while d != 1:
-            self.public_key = self.random.randint(1, f_mod)
-            d = self.euclidean(self.public_key, f_mod)
+        e = self.fermat_numbers(phi_n)
+        st.write("Открытая экспонента е = ", e)
 
-        st.write("Публичный ключ: ", self.public_key)
+        d = self.modular_inverse(e, phi_n)
+        st.write("Секретная экспонента d = ", d)
 
-        self.private_key = self.extended_euclidean(self.public_key, f_mod)[1]
-
-        self.private_key = self.private_key % f_mod
-        if self.private_key < 0:
-            self.private_key += f_mod
-
-        return (self.private_key, modulus), (self.public_key, modulus)
+        return (e, n), (d, n)
 
     @staticmethod
     def encrypt(message, public_key):
@@ -86,8 +83,33 @@ def main():
     st.markdown("**Цель работы:** Получение навыков построения алгоритма шифрования RSA.")
     st.markdown("---")
 
-    a = RSA()
-    public_key, private_key = a.generate_keys()
+    rsa = RSA()
+
+    type_pq = st.radio(
+        "Выберите тип получения p и q:", (
+            "1. Генерация",
+            "2. Ручной ввод",
+        )
+    )
+
+    p, q = 0, 0
+    if type_pq[:1] == "1":
+        key_size = st.selectbox("Выберите размер ключа (бит):", [8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096], index=7)
+
+        p = rsa.generate_random_prime(key_size)
+        q = rsa.generate_random_prime(key_size)
+        st.button("Генерировать случайные p и q")
+
+    elif type_pq[:1] == "2":
+        c1, c2 = st.columns(2)
+        p = c1.number_input("Введите число p:", value=2229283031, step=1)
+        q = c2.number_input("Введите число q:", value=3851864347, step=1)
+
+    st.write("p = ", p)
+    st.write("q = ", q)
+
+    public_key, private_key = rsa.generate_keys(p, q)
+
     st.write("Публичный ключ (пара): ", public_key)
     st.write("Приватный ключ (пара): ", private_key)
     st.markdown("---")
@@ -98,11 +120,17 @@ def main():
     )
     st.button("Шифровать")
 
-    encrypted = RSA.encrypt(message, public_key)
-    st.write("Результат шифрования:", encrypted)
+    encrypted = rsa.encrypt(message, public_key)
+    show_encrypted = st.checkbox("Показать результат шифрования")
+    if show_encrypted:
+        st.write(encrypted)
 
-    plaintext = RSA.decrypt(encrypted, private_key)
-    st.write(f"Результат дешифровки: {plaintext}")
+    st.markdown("---")
+    st.button("Дешифровать")
+    decrypted = rsa.decrypt(encrypted, private_key)
+    show_decrypted = st.checkbox("Показать результат дешифровки", True)
+    if show_decrypted:
+        st.write(decrypted)
 
     st.markdown("---")
 

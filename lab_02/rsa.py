@@ -1,6 +1,7 @@
 import streamlit as st
 import secrets
 import sympy
+import time
 
 
 class RSA:
@@ -77,6 +78,19 @@ class RSA:
             st.error(e)
 
 
+def gen_pq(rsa):
+    key_size = st.selectbox("Выберите размер ключа (бит):", [8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096], index=7)
+
+    start = time.time()
+    p = rsa.generate_random_prime(key_size)
+    q = rsa.generate_random_prime(key_size)
+    end = time.time()
+
+    st.button("Генерировать случайные p и q")
+    st.write(f"Сгенерировано за {round(end - start, 6)} секунд")
+    return p, q
+
+
 def main():
     st.markdown("### Лабораторная работа №2")
     st.markdown("**Тема:** Реализация алгоритма шифрования RSA")
@@ -94,11 +108,7 @@ def main():
 
     p, q = 0, 0
     if type_pq[:1] == "1":
-        key_size = st.selectbox("Выберите размер ключа (бит):", [8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096], index=7)
-
-        p = rsa.generate_random_prime(key_size)
-        q = rsa.generate_random_prime(key_size)
-        st.button("Генерировать случайные p и q")
+        p, q = gen_pq(rsa)
 
     elif type_pq[:1] == "2":
         c1, c2 = st.columns(2)

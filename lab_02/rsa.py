@@ -44,10 +44,10 @@ class RSA:
 
     def generate_keys(self, p, q):
         if sympy.isprime(p) is False or sympy.isprime(q) is False:
-            st.error('Число должно быть простым. Повторите ввод или сгенерируйте числа.')
+            st.error("Число должно быть простым. Повторите ввод или сгенерируйте числа.")
             st.stop()
         elif p == q:
-            st.error('Числа p и q не могут быть равны. Повторите ввод или сгенерируйте числа.')
+            st.error("Числа p и q не могут быть равны. Повторите ввод или сгенерируйте числа.")
             st.stop()
         n = p * q
         phi_n = (p - 1) * (q - 1)
@@ -56,12 +56,17 @@ class RSA:
 
         d = self.modular_inverse(e, phi_n)
 
-        show_gen_data = st.checkbox("Показать значения n, φ(n), e и d")
-        if show_gen_data:
-            st.write("Модуль (n) = ", n)
-            st.write("Функция Эйлера от числа n = ", phi_n)
-            st.write("Открытая экспонента е = ", e)
-            st.write("Секретная экспонента d = ", d)
+        col1, col2 = st.columns(2)
+        with col1:
+            st.write("Модуль (n):")
+            st.code(n)
+            st.write("Функция Эйлера от числа n:")
+            st.code(phi_n)
+        with col2:
+            st.write("Открытая экспонента е:")
+            st.code(e)
+            st.write("Секретная экспонента d:")
+            st.code(d)
 
         return (e, n), (d, n)
 
@@ -89,9 +94,7 @@ def gen_pq(rsa):
     q = rsa.generate_random_prime(key_size)
     end = time.time()
 
-    st.form_submit_button("Генерировать случайные p и q")
-    st.write(f"Сгенерировано за {round(end - start, 6)} секунд")
-    return p, q
+    return p, q, end - start
 
 
 def main():
@@ -100,39 +103,52 @@ def main():
     st.markdown("**Цель работы:** Получение навыков построения алгоритма шифрования RSA.")
     st.markdown("---")
 
-    with st.form("Gen keys"):
+    with st.form("Gen pq"):
         rsa = RSA()
 
-        p, q = gen_pq(rsa)
+        p, q, gen_time = gen_pq(rsa)
 
-        show_pq = st.checkbox("Показать сгенерированные p и q")
-        if show_pq:
-            st.write("p = ", p)
-            st.write("q = ", q)
+        c1, c2 = st.columns(2)
+        with c1:
+            st.write("p:")
+            st.code(p)
+        with c2:
+            st.write("q:")
+            st.code(q)
 
+        st.form_submit_button("Генерировать случайные p и q")
+        st.write(f"Сгенерировано за {round(gen_time, 6)} секунд")
+
+    with st.form("Gen keys"):
         public_key, private_key = rsa.generate_keys(p, q)
+        st.form_submit_button("Генерировать ключи")
 
-        st.write("Публичный ключ (пара): ", public_key)
-        st.write("Приватный ключ (пара): ", private_key)
+        c3, c4 = st.columns(2)
+        with c3:
+            st.write("Публичный ключ (пара):")
+            st.code(public_key)
+        with c4:
+            st.write("Приватный ключ (пара):")
+            st.code(private_key)
 
     with st.form("Encrypt"):
         message = st.text_area(
             "Введите сообщение для шифрования:",
             value="Если проект не укладывается в сроки, то добавление рабочей силы задержит его еще больше."
         )
-        st.form_submit_button("Шифровать")
 
         encrypted = rsa.encrypt(message, public_key)
         show_encrypted = st.checkbox("Показать результат шифрования")
         if show_encrypted:
             st.write(encrypted)
 
+        st.form_submit_button("Шифровать")
+
     with st.form("Decrypt"):
-        st.form_submit_button("Дешифровать")
         decrypted = rsa.decrypt(encrypted, private_key)
-        show_decrypted = st.checkbox("Показать результат дешифровки", True)
-        if show_decrypted:
-            st.write(decrypted)
+        st.write(decrypted)
+
+        st.form_submit_button("Дешифровать")
 
 
 if __name__ == "__main__":

@@ -10,11 +10,11 @@ FILE_TYPES = ["png", "bmp"]
 URL = "https://allaircraft.ru/uploads/posts/2012-06/1339848718_pak-fa1.png"
 
 
-def get_image_download_link(img):
+def get_image_download_link(img, label="Сохранить изображение"):
     img.save("img.png")
     with open("img.png", "rb") as file:
         return st.download_button(
-            label="Сохранить изображение",
+            label=label,
             data=file,
             file_name="info_security_lab.png",
             mime="image/png"
@@ -88,7 +88,6 @@ def encrypt(img, message):
     st.code(keys)
     st.write("Изображение с зашифрованным текстом:")
     st.image(img)
-    get_image_download_link(img)
     return keys, img
 
 
@@ -121,11 +120,15 @@ def main():
         # value="Самые ужасные строения — это те, бюджет которых был слишком велик для поставленных целей."
     )
 
-    st.button("Шифровать")
-    keys, encrypted_image = encrypt(img, message)
+    with st.form("encrypt"):
+        st.form_submit_button("Шифровать")
+        keys, encrypted_image = encrypt(img, message)
 
-    st.button("Дешифровать")
-    decrypt(encrypted_image, keys)
+    get_image_download_link(encrypted_image, "Сохранить изображение с шифром")
+
+    with st.form("decrypt"):
+        st.form_submit_button("Дешифровать")
+        decrypt(encrypted_image, keys)
 
 
 if __name__ == "__main__":

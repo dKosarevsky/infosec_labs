@@ -3,7 +3,7 @@ import streamlit as st
 from lab_01 import caesar
 from lab_02 import rsa
 from lab_03 import steganography
-# from lab_04 import
+from lab_04 import huffman
 # from lab_05 import
 
 # st.set_page_config(initial_sidebar_state="collapsed")
@@ -30,10 +30,10 @@ def main():
             "1. Шифр Цезаря, Виженера.",
             "2. Алгоритм шифрования RSA.",
             "3. Стеганография.",
-            # "4. .",
+            "4. Код Хаффмана.",
             # "5. .",
         ),
-        index=2
+        index=3
     )
 
     if lab[:1] == "1":
@@ -45,8 +45,8 @@ def main():
     elif lab[:1] == "3":
         steganography.main()
 
-    # elif lab[:1] == "4":
-    #     .main()
+    elif lab[:1] == "4":
+        huffman.main()
 
     # elif lab[:1] == "5":
     #     .main()

@@ -58,8 +58,7 @@ def total_gain(data, coding):
     for symbol in symbols:
         count = data.count(symbol)
         after_compression += count * len(coding[symbol])
-    st.write("Размер до сжатия (биты):", before_compression)
-    st.write("Размер после сжатия (биты):", after_compression)
+    return before_compression, after_compression
 
 
 def encoding(data):
@@ -94,10 +93,10 @@ def encoding(data):
     merged_df = freq.merge(df, left_index=True, right_index=True).sort_values(by="Частота")
     st.write("Символы с частотой и кодами:", merged_df)
 
-    total_gain(data, encoding_res)
+    before, after = total_gain(data, encoding_res)
     encoded_output = output_encoded(data, encoding_res)
 
-    return encoded_output, nodes[0]
+    return encoded_output, nodes[0], before, after
 
 
 def decoding(encoded_data, huffman_tree):
@@ -136,9 +135,11 @@ def main():
             value="beep boop beer!"
         )
         st.form_submit_button("Кодировать")
-        encoded, tree = encoding(message)
+        encoded, tree, size_before, size_after = encoding(message)
         st.write("Результат сжатия:")
         st.code(encoded)
+        st.write("Размер до сжатия (биты):", size_before)
+        st.write("Размер после сжатия (биты):", size_after)
 
     with st.form("decoding"):
         st.form_submit_button("Декодировать")

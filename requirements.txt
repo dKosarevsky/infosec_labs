@@ -1,8 +1,8 @@
 # Streamlit
-streamlit==1.5.1  # https://streamlit.io/
+streamlit==1.8.1  # https://streamlit.io/
 
 # Watchdog
-watchdog==2.1.6  # https://github.com/gorakhargosh/watchdog
+watchdog==2.1.7  # https://github.com/gorakhargosh/watchdog
 
 # SymPy
-sympy==1.9  # https://www.sympy.org/
+sympy==1.10.1  # https://www.sympy.org/

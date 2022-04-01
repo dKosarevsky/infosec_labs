@@ -4,7 +4,7 @@ from lab_01 import caesar
 from lab_02 import rsa
 from lab_03 import steganography
 from lab_04 import huffman
-# from lab_05 import
+from lab_05 import LFSR
 
 # st.set_page_config(initial_sidebar_state="collapsed")
 st.sidebar.image('logo.png', width=300)
@@ -31,9 +31,10 @@ def main():
             "2. Алгоритм шифрования RSA.",
             "3. Стеганография.",
             "4. Код Хаффмана.",
-            # "5. .",
+            "5. РСЛОС.",
+            # "6. ______.",
         ),
-        index=3
+        index=4
     )
 
     if lab[:1] == "1":
@@ -48,8 +49,11 @@ def main():
     elif lab[:1] == "4":
         huffman.main()
 
-    # elif lab[:1] == "5":
-    #     .main()
+    elif lab[:1] == "5":
+        LFSR.main()
+
+    # elif lab[:1] == "6":
+    #     _____.main()
 
 
 if __name__ == "__main__":
